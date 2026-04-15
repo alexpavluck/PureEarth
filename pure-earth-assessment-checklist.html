@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Earth — Systems Analysis Assessment Checklist</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f2;
+    --bg-tertiary: #f0efe9;
+    --text: #1a1a18;
+    --text-secondary: #5a5a56;
+    --text-tertiary: #9a9994;
+    --border: #e0dfd8;
+    --border-mid: #c8c7c0;
+    --amber: #b87316;
+    --amber-bg: #fef4e2;
+    --amber-text: #8a5200;
+    --green-bg: #edf7e4;
+    --green-text: #2a6e1a;
+    --green-border: #b8dda8;
+    --blue-bg: #e6f2fc;
+    --blue-text: #1558a0;
+    --blue-border: #a8ccee;
+    --red-bg: #fceee9;
+    --red-text: #9c3010;
+    --red-border: #e8b8a8;
+    --gray-bg: #f0efe9;
+    --gray-text: #5a5a56;
+  }
+
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 0.5px solid var(--border-mid);
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 3px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .header-actions { display: flex; gap: 8px; margin-top: 4px; }
+
+  /* Buttons */
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-mid);
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  button:hover { background: var(--bg-secondary); }
+  .btn-notion {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    border-color: var(--blue-border);
+  }
+  .btn-notion:hover { background: #d0e8f8; }
+
+  /* Progress */
+  .progress-section { margin-bottom: 1.25rem; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+  }
+  .pb { height: 4px; background: var(--border); border-radius: 2px; }
+  .pf { height: 4px; background: var(--amber); border-radius: 2px; transition: width 0.25s; }
+
+  /* Stats */
+  .stats-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .stat-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .stat-known { background: var(--green-bg); color: var(--green-text); }
+  .stat-gap { background: var(--amber-bg); color: var(--amber-text); }
+  .stat-auto { background: var(--blue-bg); color: var(--blue-text); }
+  .stat-human { background: var(--red-bg); color: var(--red-text); }
+  .stat-disc { background: var(--gray-bg); color: var(--gray-text); }
+
+  /* Filter bar */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .filter-label { font-size: 12px; color: var(--text-tertiary); margin-right: 2px; }
+  .fbtn {
+    font-size: 12px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .fbtn:hover { background: var(--bg-secondary); }
+  .fbtn.on { border-color: var(--amber); color: var(--amber-text); background: var(--amber-bg); font-weight: 500; }
+
+  /* Sections */
+  .section {
+    margin-bottom: 1rem;
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .shdr {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .shdr:hover { background: var(--bg-tertiary); }
+  .shdr-info { flex: 1; min-width: 0; }
+  .shdr-ph {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 2px;
+  }
+  .shdr-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .shdr-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .shdr-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .shdr-count { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
+  .sec-pb { width: 50px; height: 3px; background: var(--border); border-radius: 2px; }
+  .sec-pf { height: 3px; background: var(--amber); border-radius: 2px; transition: width 0.25s; }
+  .chev {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    display: inline-block;
+    transition: transform 0.15s;
+    line-height: 1;
+  }
+  .chev.up { transform: rotate(180deg); }
+
+  .sbody { padding: 0 16px; }
+  .sbody.closed { display: none; }
+
+  /* Items */
+  .item-wrap { }
+  .item-wrap.iwhide { display: none; }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 0 3px;
+  }
+  .icb {
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: var(--amber);
+    cursor: pointer;
+  }
+  .ilbl {
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.45;
+    cursor: pointer;
+  }
+  .ilbl.done { text-decoration: line-through; color: var(--text-tertiary); }
+  .ssel {
+    font-size: 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1px 5px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    flex-shrink: 0;
+    max-width: 108px;
+    font-family: inherit;
+  }
+  .s-known { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+  .s-gap { background: var(--amber-bg); color: var(--amber-text); border-color: #e8c888; }
+  .s-auto { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+  .s-human { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+  .s-disc { background: var(--gray-bg); color: var(--gray-text); border-color: var(--border-mid); }
+
+  .note-row {
+    display: flex;
+    padding: 0 0 9px 23px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .note-row:last-of-type { border-bottom: none; }
+  .note-ta {
+    width: 100%;
+    font-size: 12px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    resize: none;
+    font-family: inherit;
+    line-height: 1.4;
+    height: 32px;
+    overflow: hidden;
+    transition: height 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .note-ta:focus {
+    outline: none;
+    border-color: var(--border-mid);
+    background: var(--bg-secondary);
+    color: var(--text);
+    height: 60px;
+  }
+  .note-ta::placeholder { color: var(--text-tertiary); font-size: 11.5px; }
+  .note-ta.has-notes {
+    border-color: var(--border-mid);
+    color: var(--text);
+    height: auto;
+    min-height: 32px;
+  }
+
+  /* Notion export modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-body { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .modal-ta {
+    flex: 1;
+    min-height: 200px;
+    font-size: 12px;
+    font-family: 'Menlo', 'Consolas', monospace;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text);
+    resize: none;
+    line-height: 1.5;
+  }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-copy {
+    background: var(--green-bg);
+    color: var(--green-text);
+    border-color: var(--green-border);
+    font-weight: 500;
+  }
+  .btn-copy:hover { background: #daf0ce; }
+
+  /* Print */
+  @media print {
+    body { background: white; }
+    .header-actions, .stats-row, .filter-row, .modal-overlay { display: none !important; }
+    .sbody { display: block !important; }
+    .note-ta { height: auto !important; border: none; background: transparent; padding: 0; font-size: 11px; color: #555; }
+    .section { break-inside: avoid; border: 1px solid #ddd; margin-bottom: 0.75rem; }
+    .page { padding: 1rem; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <div class="header-eyebrow">Pure Earth · Systems Analysis</div>
+      <div class="header-title">Assessment Checklist</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-notion" onclick="openExport()">Export for Notion</button>
+      <button onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-label">
+      <span>Overall progress</span>
+      <span id="gc">0 / 0 checked</span>
+    </div>
+    <div class="pb"><div class="pf" id="gb" style="width:0%"></div></div>
+  </div>
+
+  <div class="stats-row">
+    <span class="stat-badge stat-known">&#10003; Known: <b id="cn-known">0</b></span>
+    <span class="stat-badge stat-gap">&#9651; Gap: <b id="cn-gap">0</b></span>
+    <span class="stat-badge stat-auto">&#8634; Automate: <b id="cn-auto">0</b></span>
+    <span class="stat-badge stat-human">&#9678; Req. Human: <b id="cn-human">0</b></span>
+    <span class="stat-badge stat-disc">&#9679; To Discuss: <b id="cn-disc">0</b></span>
+  </div>
+
+  <div class="filter-row">
+    <span class="filter-label">Filter:</span>
+    <button class="fbtn on" id="fb-all" onclick="setF('all')">All</button>
+    <button class="fbtn" id="fb-known" onclick="setF('known')">&#10003; Known</button>
+    <button class="fbtn" id="fb-gap" onclick="setF('gap')">&#9651; Gap</button>
+    <button class="fbtn" id="fb-auto" onclick="setF('auto')">&#8634; Automate</button>
+    <button class="fbtn" id="fb-human" onclick="setF('human')">&#9678; Req. Human</button>
+    <button class="fbtn" id="fb-disc" onclick="setF('disc')">&#9679; To Discuss</button>
+  </div>
+
+  <div id="sc"></div>
+
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal" onclick="closeExport(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Export for Notion</div>
+    <div class="modal-body">Copy the text below and paste it into a Notion page. Notion will recognise the <code>[ ]</code> and <code>[x]</code> checkboxes automatically.</div>
+    <textarea class="modal-ta" id="export-ta" readonly></textarea>
+    <div class="modal-actions">
+      <button onclick="closeExport()">Close</button>
+      <button class="btn-copy" onclick="copyExport()">&#10003; Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const OPTS=[
+  {v:'',l:'— tag —',c:''},
+  {v:'known',l:'✓ Known',c:'s-known'},
+  {v:'gap',l:'△ Gap',c:'s-gap'},
+  {v:'auto',l:'↻ Automate',c:'s-auto'},
+  {v:'human',l:'◎ Req. Human',c:'s-human'},
+  {v:'disc',l:'● To Discuss',c:'s-disc'},
+];
+
+const SECS=[
+  {id:'t0',ph:'Phase 0',title:'Human Touchpoint Audit',sub:'Map where data waits for people — the foundation of the automation roadmap',items:[
+    'Enumerate every step in the end-to-end data flow where a human touches data',
+    'For each touchpoint: who performs it, their role, and which country',
+    'Estimate time cost per touchpoint (mins/hrs per occurrence and frequency)',
+    'Document what fails, delays, or degrades if this person is unavailable',
+    'Map all paper-to-digital conversion points: where, by whom, with what lag',
+    'Identify all manual data validation and cleaning steps',
+    'Identify all manual aggregation, formatting, and report assembly steps',
+    'Document exception handling: what happens when a step fails or data is wrong?',
+    'For each touchpoint: assess automation feasibility (immediate / possible / difficult / infeasible)',
+  ]},
+  {id:'t1',ph:'Phase 1',title:'Business & Requirements',sub:'The what and why — goals, users, and current landscape',items:[
+    'Identify all stakeholders across all countries (collectors, managers, analysts, report recipients)',
+    'Document functional requirements: what must the system do, by country',
+    'Document performance requirements: acceptable latency, processing time, uptime SLAs',
+    'Document scalability requirements: expected growth in sites, countries, and data volume',
+    'Document usability requirements: technical literacy levels by user group and country',
+    'Document as-is data flow for each country (collection source to final output)',
+    'Catalogue current bottlenecks, delays, and data silos by country',
+    'Catalogue known data quality issues and their frequency and severity',
+    'Document current reporting outputs: who receives what, in what format, how often',
+    'Locate any existing documentation, SOPs, or data dictionaries',
+  ]},
+  {id:'t2',ph:'Phase 2',title:'System Architecture & Design',sub:'The how — technical structure, tools, and data movement',items:[
+    'Inventory all data sources by country (ODK, paper forms, databases, APIs, spreadsheets)',
+    'Document data collection tools and methods per country in detail',
+    'Review data models: are field names, formats, and coding schemes consistent across countries?',
+    'Review ETL/ELT pipelines: are transformations standardized, documented, and error-handled?',
+    'Assess data integration: where are data from different countries joined or aggregated?',
+    'Inventory the full technology stack (collection → storage → processing → reporting)',
+    'Assess scalability: can current architecture handle 10× data volume and new countries?',
+    'Review validation location: validated at point of collection, or downstream by a person?',
+    'Assess modularity: can country-specific components be updated without affecting the whole?',
+    'Review time zone and date format handling across countries',
+    'Document data storage locations, backup strategy, and disaster recovery plan',
+  ]},
+  {id:'t3',ph:'Phase 3',title:'Compliance, Security & Governance',sub:'The risk — legal, ethical, and security mandates',items:[
+    'Map applicable regulations per country (data residency, health data privacy, local laws)',
+    'Document what PII is collected, where it is stored, and who can access it',
+    'Review data masking and anonymization mechanisms for cross-border analysis',
+    'Review authentication and role-based access controls: who can see what',
+    'Verify encryption in transit (TLS/SSL) and at rest for all data stores',
+    'Review audit trails: is there a log of who accessed what data and when?',
+    'Review data consistency checks across countries (same entity, different sources)',
+    'Review error handling: are failures logged, surfaced, and actioned?',
+    'Identify the single biggest security or compliance vulnerability in the current architecture',
+  ]},
+  {id:'t4',ph:'Phase 4',title:'Tool Inventory & Fragmentation',sub:"What's in use, where it overlaps, and where it breaks",items:[
+    'Inventory all tools actively used across all countries (include informal and shadow tools)',
+    'Flag tools used by only one country (standardization or consolidation candidates)',
+    'Identify integration gaps: where do people manually bridge between two tools?',
+    'Document shadow tools: personal spreadsheets, scripts, and workarounds not officially sanctioned',
+    'Identify redundant tools performing the same function across countries',
+    'Assess licensing, maintenance, and support burden for each tool',
+    'Flag tools with no internal expertise or a single person as the sole owner/operator',
+  ]},
+  {id:'t5',ph:'Phase 5',title:'Staff Dependency Mapping',sub:'Where knowledge lives in people instead of systems',items:[
+    'Identify individuals whose departure would break or stall a data flow',
+    'Document tribal knowledge: processes that exist only in someone\'s memory',
+    'Map bus factor for each critical workflow (how many people can run this?)',
+    'Identify processes with no written documentation or standard operating procedure',
+    'Document informal communication channels that substitute for system alerts',
+    'Assess training burden: what would a new hire need to learn to maintain current workflows?',
+  ]},
+  {id:'t6',ph:'Phase 6',title:'Future State Design',sub:'From here to automated — target architecture and the gaps to close',items:[
+    'Define what a fully automated version of each key workflow looks like',
+    'Identify the gap between current state and fully automated state per workflow',
+    'Prioritize automation opportunities by impact vs. effort',
+    'Define minimum viable human roles in the target system architecture',
+    'Identify what data conditions should trigger automated alerts vs. scheduled reports',
+    'Define success metrics: how will we measure that the new system is better?',
+    'Identify quick wins: automations or improvements deliverable in under 30 days',
+    'Assess infrastructure requirements: cloud, on-prem, or hybrid',
+    'Define rollout and transition strategy: phased migration or full cutover',
+    'Document transition risks and mitigation strategies',
+  ]},
+];
+
+const ST={};
+SECS.forEach(s=>s.items.forEach((_,i)=>{ ST[`${s.id}_${i}`]={checked:false,status:'',notes:''}; }));
+let CF='all';
+
+function render(){
+  const cont=document.getElementById('sc');
+  cont.innerHTML='';
+  SECS.forEach(sec=>{
+    const tot=sec.items.length;
+    const dn=sec.items.filter((_,i)=>ST[`${sec.id}_${i}`].checked).length;
+    const pct=tot?Math.round(dn/tot*100):0;
+
+    const sdiv=document.createElement('div');
+    sdiv.className='section';sdiv.id=`sd-${sec.id}`;
+
+    const hdr=document.createElement('div');
+    hdr.className='shdr';hdr.onclick=()=>toggleS(sec.id);
+    hdr.innerHTML=`<div class="shdr-info">
+      <div class="shdr-ph">${sec.ph}</div>
+      <div class="shdr-title">${sec.title}</div>
+      <div class="shdr-sub">${sec.sub}</div>
+    </div>
+    <div class="shdr-meta">
+      <span class="shdr-count" id="sc-${sec.id}">${dn}/${tot}</span>
+      <div class="sec-pb"><div class="sec-pf" id="pf-${sec.id}" style="width:${pct}%"></div></div>
+      <span class="chev up" id="chv-${sec.id}">&#9660;</span>
+    </div>`;
+
+    const body=document.createElement('div');
+    body.className='sbody';body.id=`sb-${sec.id}`;
+
+    sec.items.forEach((txt,i)=>{
+      const id=`${sec.id}_${i}`;
+      const s=ST[id];
+      const vis=CF==='all'||s.status===CF;
+      const oc=OPTS.find(o=>o.v===s.status)?.c||'';
+
+      const iw=document.createElement('div');
+      iw.className='item-wrap'+(vis?'':' iwhide');iw.id=`iw-${id}`;
+
+      const row=document.createElement('div');
+      row.className='item-row';
+
+      const cb=document.createElement('input');
+      cb.type='checkbox';cb.className='icb';cb.id=`cb-${id}`;cb.checked=s.checked;
+      cb.addEventListener('change',e=>{
+        ST[id].checked=e.target.checked;
+        lbl.classList.toggle('done',e.target.checked);
+        updSec(sec.id);updGlo();
+      });
+
+      const lbl=document.createElement('label');
+      lbl.className='ilbl'+(s.checked?' done':'');
+      lbl.setAttribute('for',`cb-${id}`);lbl.textContent=txt;
+
+      const sel=document.createElement('select');
+      sel.className=`ssel ${oc}`;sel.id=`sel-${id}`;
+      OPTS.forEach(o=>{
+        const opt=document.createElement('option');
+        opt.value=o.v;opt.textContent=o.l;
+        if(s.status===o.v)opt.selected=true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change',e=>{
+        ST[id].status=e.target.value;
+        const nc=OPTS.find(o=>o.v===e.target.value)?.c||'';
+        sel.className=`ssel ${nc}`;
+        if(CF!=='all')iw.classList.toggle('iwhide',e.target.value!==CF);
+        updStats();
+      });
+
+      row.appendChild(cb);row.appendChild(lbl);row.appendChild(sel);
+
+      const nrow=document.createElement('div');
+      nrow.className='note-row';
+      const ta=document.createElement('textarea');
+      ta.className='note-ta'+(s.notes?' has-notes':'');
+      ta.placeholder='Notes...';ta.value=s.notes;
+      ta.addEventListener('focus',()=>{ta.style.height='60px';});
+      ta.addEventListener('blur',()=>{if(!ta.value){ta.style.height='32px';}});
+      ta.addEventListener('input',e=>{
+        ST[id].notes=e.target.value;
+        ta.classList.toggle('has-notes',!!e.target.value);
+      });
+      nrow.appendChild(ta);
+
+      iw.appendChild(row);iw.appendChild(nrow);
+      body.appendChild(iw);
+    });
+
+    sdiv.appendChild(hdr);sdiv.appendChild(body);
+    cont.appendChild(sdiv);
+  });
+  updGlo();updStats();
+}
+
+function toggleS(id){
+  const b=document.getElementById(`sb-${id}`);
+  const c=document.getElementById(`chv-${id}`);
+  if(b){const cl=b.classList.toggle('closed');c&&c.classList.toggle('up',!cl);}
+}
+
+function updSec(sid){
+  const sec=SECS.find(s=>s.id===sid);if(!sec)return;
+  const tot=sec.items.length;
+  const dn=sec.items.filter((_,i)=>ST[`${sid}_${i}`].checked).length;
+  const pct=tot?Math.round(dn/tot*100):0;
+  const pf=document.getElementById(`pf-${sid}`);if(pf)pf.style.width=pct+'%';
+  const sc=document.getElementById(`sc-${sid}`);if(sc)sc.textContent=`${dn}/${tot}`;
+}
+
+function updGlo(){
+  const ids=Object.keys(ST);
+  const tot=ids.length;const dn=ids.filter(id=>ST[id].checked).length;
+  const pct=tot?Math.round(dn/tot*100):0;
+  document.getElementById('gb').style.width=pct+'%';
+  document.getElementById('gc').textContent=`${dn} / ${tot} checked`;
+}
+
+function updStats(){
+  const m={known:0,gap:0,auto:0,human:0,disc:0};
+  Object.values(ST).forEach(s=>{if(m[s.status]!==undefined)m[s.status]++;});
+  Object.entries(m).forEach(([k,v])=>{const el=document.getElementById(`cn-${k}`);if(el)el.textContent=v;});
+}
+
+function setF(val){
+  CF=val;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  const fb=document.getElementById(`fb-${val}`);if(fb)fb.classList.add('on');
+  SECS.forEach(sec=>{
+    sec.items.forEach((_,i)=>{
+      const id=`${sec.id}_${i}`;
+      const iw=document.getElementById(`iw-${id}`);
+      if(iw)iw.classList.toggle('iwhide',val!=='all'&&ST[id].status!==val);
+    });
+  });
+}
+
+function buildExportText(){
+  const lines=['# Pure Earth — Systems Analysis Assessment Checklist',''];
+  SECS.forEach(sec=>{
+    const tot=sec.items.length;
+    const dn=sec.items.filter((_,i)=>ST[`${sec.id}_${i}`].checked).length;
+    lines.push(`## ${sec.ph}: ${sec.title} (${dn}/${tot} complete)`);
+    lines.push('');
+    sec.items.forEach((txt,i)=>{
+      const s=ST[`${sec.id}_${i}`];
+      const statusLabel=OPTS.find(o=>o.v===s.status)?.l.replace(/[✓△↻◎●]/,'').trim()||'—';
+      const check=s.checked?'[x]':'[ ]';
+      lines.push(`${check} ${txt}  [${statusLabel}]`);
+      if(s.notes)lines.push(`    → ${s.notes}`);
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function openExport(){
+  document.getElementById('export-ta').value=buildExportText();
+  document.getElementById('export-modal').classList.add('open');
+}
+
+function closeExport(e){
+  if(!e||e.target===document.getElementById('export-modal'))
+    document.getElementById('export-modal').classList.remove('open');
+}
+
+function copyExport(){
+  const ta=document.getElementById('export-ta');
+  ta.select();
+  try{
+    navigator.clipboard.writeText(ta.value).then(()=>{
+      const btn=document.querySelector('.btn-copy');
+      const orig=btn.textContent;
+      btn.textContent='Copied!';
+      setTimeout(()=>{btn.textContent=orig;},2000);
+    });
+  }catch(e){document.execCommand('copy');}
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('export-modal').classList.remove('open');});
+
+render();
+</script>
+</body>
+</html>
